@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useQueryState, parseAsString, parseAsInteger, createParser } from 'nuqs';
 import { search } from '@/lib/api';
 import { SearchParams, SearchResponse } from '@/types';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Default values for search parameters
 const DEFAULT_LIMIT = 12;
@@ -28,6 +28,9 @@ export function useSearch() {
   const [sortBy, setSortBy] = useQueryState('sortBy', parseAsString.withDefault('name'));
   const [sortOrder, setSortOrder] = useQueryState('sortOrder', sortOrderParser.withDefault('asc'));
 
+  // Manual loading state to immediately reflect changes
+  const [isManuallyLoading, setIsManuallyLoading] = useState(false);
+
   // For tracking query changes
   const queryClient = useQueryClient();
   
@@ -50,7 +53,7 @@ export function useSearch() {
   // React Query for data fetching with cancellation and debouncing
   const {
     data,
-    isLoading,
+    isLoading: isQueryLoading,
     error,
     refetch
   } = useQuery<SearchResponse>({
@@ -67,6 +70,9 @@ export function useSearch() {
 
   // Use effect to trigger debounced fetch when query parameters change
   useEffect(() => {
+    // Set loading state to true immediately when params change
+    setIsManuallyLoading(true);
+    
     // Cancel any previous timer
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
@@ -78,7 +84,9 @@ export function useSearch() {
       queryClient.cancelQueries({ queryKey: ['search'] });
       
       // Execute the request after the debounce period
-      refetch();
+      refetch().finally(() => {
+        setIsManuallyLoading(false);
+      });
     }, DEBOUNCE_MS);
     
     // Cleanup on unmount or when dependencies change
@@ -109,6 +117,9 @@ export function useSearch() {
       }
     };
   }, [queryClient]);
+
+  // Combine both loading states - either manually set or from the query
+  const isLoading = isManuallyLoading || isQueryLoading;
 
   // Handlers for updating search parameters
   const handleSearchChange = (value: string) => {

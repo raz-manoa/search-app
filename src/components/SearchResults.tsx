@@ -25,13 +25,14 @@ export function SearchResults({
   query,
 }: SearchResultsProps) {
   const hasResults = results.length > 0;
-  const isSearching = loading && query && !hasResults;
+  const isInitialSearching = loading && (!hasResults || !query);
+  const isPageChanging = loading && hasResults;
   const noResultsFound = query && !loading && !hasResults;
 
   return (
     <div className="w-full">
-      {/* Results Stats */}
-      {hasResults && (
+      {/* Results Stats - don't show during any loading */}
+      {hasResults && !loading && (
         <div className="mb-4 text-sm text-muted-foreground">
           Found {totalCount} results{' '}
           {query ? (
@@ -52,8 +53,8 @@ export function SearchResults({
         </div>
       )}
 
-      {/* Initial Loading State */}
-      {isSearching && (
+      {/* Initial Loading State - when no results yet */}
+      {isInitialSearching && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array(6)
             .fill(null)
@@ -63,33 +64,38 @@ export function SearchResults({
         </div>
       )}
 
-      {/* Search Results */}
-      {hasResults && (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {results.map((result) => (
-              <SearchResultItem key={result.id} result={result} />
-            ))}
-            
-            {/* Loading state while changing pages */}
-            {loading && hasResults && (
-              <>
-                {Array(3)
-                  .fill(null)
-                  .map((_, index) => (
-                    <LoadingSkeleton key={`loading-more-${index}`} />
-                  ))}
-              </>
-            )}
+      {/* Page Change Loading State - when results exist but changing pages */}
+      {isPageChanging && (
+        <div>
+          <div className="mb-4 text-sm text-muted-foreground animate-pulse">
+            Loading results...
           </div>
-          
-          {/* Pagination Controls */}
-          <PaginationControls 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-          />
-        </>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array(6)
+              .fill(null)
+              .map((_, index) => (
+                <LoadingSkeleton key={`page-change-${index}`} />
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* Search Results - only show when not loading */}
+      {hasResults && !loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {results.map((result) => (
+            <SearchResultItem key={result.id} result={result} />
+          ))}
+        </div>
+      )}
+      
+      {/* Pagination Controls - always show if we have results, even during loading */}
+      {hasResults && (
+        <PaginationControls 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       )}
     </div>
   );

@@ -37,6 +37,7 @@ export function SearchPage() {
     handleSortChange("name", "asc");
   };
 
+  console.log("loading", loading);
   return (
     <div className="flex flex-col items-center min-h-screen">
       <div className="container px-4 py-8 max-w-7xl mx-auto w-full">
