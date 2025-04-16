@@ -1,25 +1,27 @@
 "use client";
 
-import { SearchResult } from '@/types';
+import { Product } from '@/data/products';
 import { SearchResultItem } from '@/components/SearchResultItem';
-import { InfiniteScroll } from '@/components/InfiniteScroll';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PaginationControls } from '@/components/PaginationControls';
 
 interface SearchResultsProps {
-  results: SearchResult[];
+  results: Product[];
   loading: boolean;
-  hasMore: boolean;
+  currentPage: number;
+  totalPages: number;
   totalCount: number;
-  onLoadMore: () => void;
+  onPageChange: (page: number) => void;
   query: string;
 }
 
 export function SearchResults({
   results,
   loading,
-  hasMore,
+  currentPage,
+  totalPages,
   totalCount,
-  onLoadMore,
+  onPageChange,
   query,
 }: SearchResultsProps) {
   const hasResults = results.length > 0;
@@ -63,14 +65,14 @@ export function SearchResults({
 
       {/* Search Results */}
       {hasResults && (
-        <InfiniteScroll hasMore={hasMore} loading={loading} onLoadMore={onLoadMore}>
+        <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {results.map((result) => (
               <SearchResultItem key={result.id} result={result} />
             ))}
             
-            {/* Loading more skeletons */}
-            {loading && hasResults && hasMore && (
+            {/* Loading state while changing pages */}
+            {loading && hasResults && (
               <>
                 {Array(3)
                   .fill(null)
@@ -80,7 +82,14 @@ export function SearchResults({
               </>
             )}
           </div>
-        </InfiniteScroll>
+          
+          {/* Pagination Controls */}
+          <PaginationControls 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+          />
+        </>
       )}
     </div>
   );
@@ -96,9 +105,18 @@ function LoadingSkeleton() {
           <Skeleton className="h-4 w-24" />
         </div>
         <Skeleton className="h-8 w-full mb-4" />
+        <div className="flex justify-between items-center mb-2">
+          <Skeleton className="h-6 w-16" />
+          <Skeleton className="h-4 w-12" />
+        </div>
         <Skeleton className="h-4 w-full mb-2" />
         <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-4 w-2/3 mb-3" />
+        <div className="flex gap-1 mt-2">
+          <Skeleton className="h-4 w-12" />
+          <Skeleton className="h-4 w-14" />
+          <Skeleton className="h-4 w-10" />
+        </div>
       </div>
     </div>
   );
