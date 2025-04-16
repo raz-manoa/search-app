@@ -69,6 +69,7 @@ export function SearchPage() {
           {/* Filters sidebar */}
           <div className="md:col-span-1">
             <SearchFilters
+              className="sticky top-20"
               categories={filters.categories}
               brands={filters.brands}
               priceRange={filters.priceRange}

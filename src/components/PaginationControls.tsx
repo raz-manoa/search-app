@@ -9,17 +9,20 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
 interface PaginationControlsProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  className?: string;
 }
 
 export function PaginationControls({
   currentPage,
   totalPages,
   onPageChange,
+  className,
 }: PaginationControlsProps) {
   // Don't render pagination if there's only 1 page
   if (totalPages <= 1) {
@@ -34,8 +37,8 @@ export function PaginationControls({
 
   // Generate page numbers to display with ellipsis if needed
   const generatePageNumbers = () => {
-    const pageNumbers: (number | 'ellipsis')[] = [];
-    
+    const pageNumbers: (number | "ellipsis")[] = [];
+
     if (totalPages <= 7) {
       // Show all pages if there are 7 or fewer
       for (let i = 1; i <= totalPages; i++) {
@@ -44,36 +47,36 @@ export function PaginationControls({
     } else {
       // Always include first page
       pageNumbers.push(1);
-      
+
       // Add ellipsis if current page is more than 3
       if (currentPage > 3) {
-        pageNumbers.push('ellipsis');
+        pageNumbers.push("ellipsis");
       }
-      
+
       // Add pages around current page
       const startPage = Math.max(2, currentPage - 1);
       const endPage = Math.min(totalPages - 1, currentPage + 1);
-      
+
       for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
       }
-      
+
       // Add ellipsis if current page is less than totalPages - 2
       if (currentPage < totalPages - 2) {
-        pageNumbers.push('ellipsis');
+        pageNumbers.push("ellipsis");
       }
-      
+
       // Always include last page
       pageNumbers.push(totalPages);
     }
-    
+
     return pageNumbers;
   };
 
   const pageNumbers = generatePageNumbers();
 
   return (
-    <Pagination className="my-6">
+    <Pagination className={cn("my-6", className)}>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
@@ -83,12 +86,14 @@ export function PaginationControls({
               handlePageChange(currentPage - 1);
             }}
             aria-disabled={currentPage === 1}
-            className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+            className={
+              currentPage === 1 ? "pointer-events-none opacity-50" : ""
+            }
           />
         </PaginationItem>
 
-        {pageNumbers.map((page, index) => (
-          page === 'ellipsis' ? (
+        {pageNumbers.map((page, index) =>
+          page === "ellipsis" ? (
             <PaginationItem key={`ellipsis-${index}`}>
               <PaginationEllipsis />
             </PaginationItem>
@@ -106,7 +111,7 @@ export function PaginationControls({
               </PaginationLink>
             </PaginationItem>
           )
-        ))}
+        )}
 
         <PaginationItem>
           <PaginationNext
@@ -116,10 +121,12 @@ export function PaginationControls({
               handlePageChange(currentPage + 1);
             }}
             aria-disabled={currentPage === totalPages}
-            className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+            className={
+              currentPage === totalPages ? "pointer-events-none opacity-50" : ""
+            }
           />
         </PaginationItem>
       </PaginationContent>
     </Pagination>
   );
-} 
+}

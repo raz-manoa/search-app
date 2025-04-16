@@ -11,6 +11,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 interface SearchFiltersProps {
   categories: string[];
@@ -26,6 +27,7 @@ interface SearchFiltersProps {
   onPriceChange: (range: [number, number]) => void;
   onSortChange: (sortBy: string, order: 'asc' | 'desc') => void;
   onReset: () => void;
+  className?: string;
 }
 
 export function SearchFilters({
@@ -41,7 +43,8 @@ export function SearchFilters({
   onBrandChange,
   onPriceChange,
   onSortChange,
-  onReset
+  onReset,
+  className
 }: SearchFiltersProps) {
   const [localPriceRange, setLocalPriceRange] = useState<[number, number]>(currentPriceRange);
   
@@ -71,7 +74,7 @@ export function SearchFilters({
   };
 
   return (
-    <div className="bg-white rounded-md p-4 border mb-4">
+    <div className={cn("bg-white rounded-md p-4 border mb-4", className)}>
       <div className="mb-4">
         <h2 className="text-lg font-medium mb-4">Filters</h2>
         
