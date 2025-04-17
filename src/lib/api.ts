@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
+import axios, { CancelTokenSource } from 'axios';
 import { SearchParams, SearchResponse } from '@/types';
 
 // Store active request tokens

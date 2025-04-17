@@ -46,7 +46,6 @@ function generateProducts(count: number): Product[] {
     const brand = brands[categoryIndex];
     
     const adjectiveIndex = Math.floor(Math.random() * adjectives.length);
-    const nounIndex = Math.floor(Math.random() * nouns.length);
     const adjective = adjectives[adjectiveIndex];
     const noun = nouns[categoryIndex % nouns.length];
     

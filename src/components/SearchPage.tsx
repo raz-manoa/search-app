@@ -26,7 +26,6 @@ export function SearchPage() {
     handlePriceChange,
     handleSortChange,
     handlePageChange,
-    setQuery,
   } = useSearch();
 
   // Reset all filters
